@@ -1,9 +1,6 @@
 resource "aws_sagemaker_notebook_instance" "ni" {
-#  name                  = "maf-notebook-instance-1"
-#name                  = "${lookup(var.name, terraform.workspace)}"
   name 			= "${var.name}"
   role_arn              = "${var.aws_iam_role}"
-#  instance_type         = "ml.t2.medium"
    instance_type      	= "${lookup(var.instance_type,terraform.workspace)}"
   lifecycle_config_name = "${aws_sagemaker_notebook_instance_lifecycle_configuration.basic_lifecycle.name}"
 
@@ -15,12 +12,11 @@ resource "aws_sagemaker_notebook_instance" "ni" {
 }
 
 resource "aws_sagemaker_model" "maf_model" {
-  name               = "maf-model"
+  name               = "${var.model_name}"
   execution_role_arn = "${var.aws_iam_role}"
 
   primary_container {
-#    image = "421089506438.dkr.ecr.us-east-1.amazonaws.com/<image_name>"
-     image = "421089506438.dkr.ecr.us-east-1.amazonaws.com/churn-model-v3"
+    image = "421089506438.dkr.ecr.us-east-1.amazonaws.com/${var.image_name}"
   }
 }
 
@@ -31,10 +27,12 @@ data "template_file" "instance_init" {
     s3_bucket_name_1     = "${var.s3_bucket_name_1}-${var.aws_region}"
     aws_region           = "${var.aws_region}"
     function_bucket_name = "${var.function_bucket_name}"
+project_name="${var.project_name}"
+notebook_name="${var.notebook_name}"
   }
 }
 
 resource "aws_sagemaker_notebook_instance_lifecycle_configuration" "basic_lifecycle" {
-  name     = "BasicNotebookInstanceLifecycleConfig"
+  name     = "${var.lifecycle_name}"
   on_start = "${base64encode(data.template_file.instance_init.rendered)}"
 }

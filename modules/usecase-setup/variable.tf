@@ -39,3 +39,9 @@ stage = "ml.t2.large"
 dev = "ml.t3.medium"
 }
 }
+variable "lifecycle_name" {}
+variable "model_name" {}
+variable "image_name" {}
+variable "project_name" {}
+variable "notebook_name" {}
+
