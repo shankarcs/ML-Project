@@ -1,5 +1,5 @@
 resource "aws_sagemaker_endpoint_configuration" "maf-endpoint" {
-  name = "maf-endpoint-config"
+  name = "maf-endpoint-config-${var.project_name}"
 
   production_variants {
     variant_name           = "variant-1"
